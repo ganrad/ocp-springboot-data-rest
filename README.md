@@ -53,7 +53,7 @@ $ oc secrets add serviceaccount/default secret/mysql-secret --for=mount
 8. Use the OpenShift Web Console (UI) to deploy the Springboot application instance (Pod) in OpenShift. Name the application as *po-service*.  Allow the application build to finish and the application Pod to come up (start).  The application Pod will start and terminate as we have not injected the secret (*mysql-secret*) containing the database user name and password into the Pod yet.  We will do this in the next step.
 9.  Use the command below to mount the *mysql-db-name" ConfigMap into your appliction Pod.
 ```
-$ oc volume dc/po-service --add --name=mysqlcm --type=configmap --secret-name='mysql-db-name' --mount-path='/etc/vol-secrets'
+$ oc volume dc/po-service --add --name=mysqlcm --type=configmap --configmap-name='mysql-db-name' --mount-path='/etc/config'
 ```
 The above command will trigger a new application deployment.  Wait for the deplooyment to finish.
 10. Use the command below to mount the *mysql-secret* Secret into your application Pod.
