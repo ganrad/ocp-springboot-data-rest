@@ -1,5 +1,9 @@
 #  Create, Build and Deploy a Springboot Microservice (Application/API Endpoint) in OpenShift CP
 
+**Prerequisities**
+1.  OpenShift CP v3.6 or above.
+2.  Select a MySql Server v5.7 (or above) image when deploying the database server Pod.
+
 This Springboot application demonstrates how to build and deploy a *Purchase Order* microservice as a containerized application on OpenShift CP. The deployed microservice supports all CRUD operations on purchase orders.
 
 ### A] First, create a new project in OpenShift using the Web Console (UI).
