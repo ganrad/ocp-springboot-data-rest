@@ -56,21 +56,26 @@ $ oc secrets add serviceaccount/default secret/mysql-secret --for=mount
 $ oc volume dc/po-service --add --name=mysqlcm --type=configmap --configmap-name='mysql-db-name' --mount-path='/etc/config'
 ```
 The above command will trigger a new application deployment.  Wait for the deplooyment to finish.
+
 10.  Use the command below to mount the *mysql-secret* Secret into your application Pod.
 ```
 $ oc volume dc/po-service --add --name=mysqlse --type=secret --secret-name='mysql-secret' --mount-path='/etc/vol-secrets'
 ```
 The above command will trigger another application deployment.  Wait for the deployment to finish.  As soon as the deployment finishes, the *po-service* application Pod should start Ok.  The application should now be able to connect to the backend MySql database.
+
 11.  Test the microservice by using the *scripts* in the */scripts* directory.  The microservice exposes a HATEAS API and supports all CRUD operations on purchase orders.
+
 12.  (Optional) Use the command below to export all API objects to a (reusable) template.  This template can be used for deploying the *po-service* applicaton along with all it's dependencies (MySql server, secrets, configmaps ...) in other regions easily.
 ```
 $ oc export is,secret,configmap,bc,dc,svc,route --as-template=springboot-po-service -o json > kubernetes.json
 ```
+
 13.  (Optional) Create a project *myproject* and import the application template into this project.
 ```
 $ oc new-project myproject
 $ oc create -f kubernetes.json
 ```
+
 14.  (Optional) Use the OpenShift Web Console (UI) to deploy the *mysql* database server Pod and *po-service* microservice Pod with a single click.  Select the *springboot-po-service* template in the S2I application deployment wizard. 
 
 Congrats!  You have just built and deployed a simple Springboot microservice on OpenShift CP.
