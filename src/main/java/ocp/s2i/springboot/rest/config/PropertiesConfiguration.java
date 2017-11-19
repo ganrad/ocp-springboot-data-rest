@@ -1,17 +1,20 @@
 package ocp.s2i.springboot.rest.config;
 
-import java.util.List;
-import java.util.ArrayList;
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.FileSystemResource;
+// import java.util.List;
+// import java.util.ArrayList;
+// import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
+// import org.springframework.core.io.Resource;
+// import org.springframework.core.io.FileSystemResource;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
+@PropertySource("file:/etc/vol-secrets/username.properties")
+@PropertySource("file:/etc/vol-secrets/password.properties")
 public class PropertiesConfiguration {
 
 
-    @Bean
+    /** @Bean
     public PropertyPlaceholderConfigurer properties() {
         final PropertyPlaceholderConfigurer ppc = new PropertyPlaceholderConfigurer();
 //        ppc.setIgnoreUnresolvablePlaceholders(true);
@@ -28,5 +31,10 @@ public class PropertiesConfiguration {
         ppc.setLocations(resourceLst.toArray(new Resource[]{}));
 
         return ppc;
+    } */
+
+    @Bean
+    public static PropertySourcesPlaceholderConfigurer propertyConfig() {
+	return new PropertySourcesPlaceholderConfigurer();
     }
 }

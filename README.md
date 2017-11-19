@@ -33,5 +33,5 @@ $ oc secrets add serviceaccount/default secret/mysql-secret --for=mount
 7. Deploy your Springboot application.
 8. Mount the *mysql-secret* into your application pod.
 ```
-$ oc volume dc/springboot-app --add --name=mysqldb --type=secret --secret-name='mysql-secret' --mount-path='/etc/vol-secrets'
+$ oc volume dc/po-service --add --name=mysqldb --type=secret --secret-name='mysql-secret' --mount-path='/etc/vol-secrets'
 
