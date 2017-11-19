@@ -35,8 +35,8 @@ kind: Secret
 metadata:
   name: mysql-secret
 data:
-  db.username: bW9uZ29kYi51c2VyPW9zZVVzZXIK
-  db.password: bW9uZ29kYi5wYXNzd29yZD1vcGVuc2hpZnQK
+  db.username: bXlzcWwudXNlcj1teXNxbAo=
+  db.password: bXlzcWwucGFzc3dvcmQ9cGFzc3dvcmQK
 ```
 5. Create the secret API object in your project/namespace.
 ```
