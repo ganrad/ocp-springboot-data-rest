@@ -11,6 +11,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 @Configuration
 @PropertySource("file:/etc/vol-secrets/username.properties")
 @PropertySource("file:/etc/vol-secrets/password.properties")
+@PropertySource("file:/etc/vol-secrets/mysqldb.properties")
 public class PropertiesConfiguration {
 
 

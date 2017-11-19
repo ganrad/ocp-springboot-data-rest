@@ -4,7 +4,7 @@
 1.  OpenShift CP v3.6 or above.
 2.  Select a MySql Server v5.7 (or above) image when deploying the database server Pod.
 
-This Springboot application demonstrates how to build and deploy a *Purchase Order* microservice as a containerized application on OpenShift CP. The deployed microservice supports all CRUD operations on purchase orders.
+This Springboot application demonstrates how to build and deploy a *Purchase Order* microservice as a containerized application (po-service) on OpenShift CP. The deployed microservice supports all CRUD operations on purchase orders.
 
 ### A] First, create a new project in OpenShift using the Web Console (UI).
 Name the project as *myproject*.
@@ -17,13 +17,18 @@ Database user name = mysql
 Database password = password
 ```
 ### C] Deploy the *Purchase Order* microservice application on OpenShift CP.
-1.  Download the *mysql-secret.yaml* file from this project to your local machine.
-2.  Generate a *Base64* encoded value for the MySql server user name and password. See the commands below.
+1.  Download *mysqldb.properties* and *mysql-secret.yaml* files from this project to your local machine.
+2.  For this po-service application, we will store the MySql database name in a *ConfigMap* and inject this value into our po-service application Pod.  Use the commands below to create the *mysql-db-name* ConfigMap in your project and list it's contents.
+```
+oc create configmap mysql-db-name --from-file=./mysqldb.properties
+oc get configmaps mysql-db-name -o yaml
+```
+3.  We will store the MySql database user name and password in a *Secret* and inject these values into the application Pod. Next, generate a *Base64* encoded value for the MySql server user name and password. See the commands below.
 ```
 $ echo "mysql.user=mysql" | base64 -w 0
 $ echo "mysql.password=password" | base64 -w 0
 ```
-3.  Substitute the *Base64* encoded values for the MySql server user name and password in the *mysql-secret.yaml* file as shown below.
+4.  Substitute the *Base64* encoded values for the MySql server user name and password in the *mysql-secret.yaml* file as shown below.
 ```
 apiVersion: v1
 kind: Secret
@@ -33,24 +38,30 @@ data:
   db.username: bW9uZ29kYi51c2VyPW9zZVVzZXIK
   db.password: bW9uZ29kYi5wYXNzd29yZD1vcGVuc2hpZnQK
 ```
-4. Create the secret API object in your project/namespace.
+5. Create the secret API object in your project/namespace.
 ```
 $ oc create -f mysql-secret.yaml
 ```
-5. List the secret objects in your project/namespace.
+6. List the secret objects in your project/namespace.
 ```
 $ oc get secrets
 ```
-6. Add the *mysql-secret* secret to the default Service Account.
+7. Add the *mysql-secret* secret to the default Service Account.
 ```
 $ oc secrets add serviceaccount/default secret/mysql-secret --for=mount
 ```
-7. Use the OpenShift Web Console (UI) to deploy the Springboot application instance (Pod) in OpenShift. Name the application as *po-service*.  Allow the application build to finish and the application Pod to come up (start).  The application Pod will start and terminate as we have not injected the secret (*mysql-secret*) containing the database user name and password into the Pod yet.  We will do this in the next step.
-8. Use the command below to mount the *mysql-secret* into your application Pod.
+8. Use the OpenShift Web Console (UI) to deploy the Springboot application instance (Pod) in OpenShift. Name the application as *po-service*.  Allow the application build to finish and the application Pod to come up (start).  The application Pod will start and terminate as we have not injected the secret (*mysql-secret*) containing the database user name and password into the Pod yet.  We will do this in the next step.
+9.  Use the command below to mount the *mysql-db-name" ConfigMap into your appliction Pod.
 ```
-$ oc volume dc/po-service --add --name=mysqldb --type=secret --secret-name='mysql-secret' --mount-path='/etc/vol-secrets'
+$ oc volume dc/po-service --add --name=mysqlcm --type=configmap --secret-name='mysql-db-name' --mount-path='/etc/vol-secrets'
 ```
-The above command will trigger a new application deployment.  Wait for the deployment to finish.  As soon as the deployment finishes, the *po-service* application Pod should start Ok.  The application should now be able to connect to the backend MySql database.
-9.  Test the microservice by using the *scripts* in the */scripts* directory.  The microservice exposes a HATEAS API and supports all CRUD operations on purchase orders.
+The above command will trigger a new application deployment.  Wait for the deplooyment to finish.
+10. Use the command below to mount the *mysql-secret* Secret into your application Pod.
+```
+$ oc volume dc/po-service --add --name=mysqlse --type=secret --secret-name='mysql-secret' --mount-path='/etc/vol-secrets'
+```
+The above command will trigger another application deployment.  Wait for the deployment to finish.  As soon as the deployment finishes, the *po-service* application Pod should start Ok.  The application should now be able to connect to the backend MySql database.
+11.  Test the microservice by using the *scripts* in the */scripts* directory.  The microservice exposes a HATEAS API and supports all CRUD operations on purchase orders.
+12.  (Optional) Use the command below to export all API objects within a (reusable) template for deploying your application next time.
 
 Congrats!  You have just built and deployed a simple Springboot microservice on OpenShift CP.
